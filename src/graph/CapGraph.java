@@ -61,11 +61,27 @@ public class CapGraph implements Graph {
 	@Override
 	public Graph getEgonet(int center) {
 		// TODO Auto-generated method stub
-		CapGraph graph = new CapGraph();
-		graph.nodes.put(center, nodes.get(center));
-		//System.out.println(graph.nodes.size());
 		
-		return graph;
+		if (nodes.containsKey(center)) {
+			CapGraph graph = new CapGraph();
+			graph.addVertex(center);
+			graph.nodes.get(center).addAll(nodes.get(center));
+			for (Integer i : graph.nodes.get(center)) {
+				graph.addVertex(i);
+				graph.nodes.get(i).add(center);
+				for (Integer j : nodes.get(i)) {
+					if (graph.nodes.get(center).contains(j)) {
+						graph.nodes.get(i).add(j);
+					}
+				}
+				
+				
+			}
+			
+			return graph;
+		}
+				
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -102,8 +118,8 @@ public class CapGraph implements Graph {
 		Graph graph = new CapGraph();
         GraphLoader.loadGraph(graph, "data/facebook_ucsd.txt");
         HashMap<Integer, HashSet<Integer>> res = graph.getEgonet(0).exportGraph();
-		System.out.println(res.get(0));
-		
+		System.out.println(res.get(22));
+		//System.out.println(res);
 		
 		
 		
