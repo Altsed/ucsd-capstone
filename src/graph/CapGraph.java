@@ -157,7 +157,7 @@ public class CapGraph implements Graph {
 
 		finished.push(v);
 		nodesOfSCC.push(v);
-		System.out.println(finished.toString());
+	//	System.out.println(finished.toString());
 		
 		
 		
@@ -175,7 +175,7 @@ public class CapGraph implements Graph {
 				reverseNodes.get(vertices).add(i);
 			}
 		}
-		System.out.println(reverseNodes.toString());
+	//	System.out.println(reverseNodes.toString());
 		return reverseNodes;
 		
 	}
@@ -183,14 +183,17 @@ public class CapGraph implements Graph {
 	@Override
 	public List<Graph> getSCCs() {
 		// TODO Auto-generated method stub
-		HashMap<Integer, HashSet<Integer>> reverseNodes = new HashMap<>();
-		reverseNodes = reverseGraph(nodes);
-		DFS(finished, reverseNodes);
+		
+		
+		DFS(nodesToVertices(nodes), nodes);
+		
+		DFS(finished, reverseGraph(nodes));
+		/*
 		for (Graph g : listSCC) {
 			System.out.println(g.exportGraph().toString());	
 		}
 		
-	
+	*/
 		return listSCC;
 	}
 
@@ -204,13 +207,13 @@ public class CapGraph implements Graph {
 		return nodes;
 	}
 	
-	
+	/*
 	public static void main(String[] args) throws FileNotFoundException {
 		//CapGraph graph = new CapGraph();
 	
 		
 		
-		/*
+		
 		Graph graph = new CapGraph();
         GraphLoader.loadGraph(graph, "data/facebook_ucsd.txt");
         HashMap<Integer, HashSet<Integer>> res = graph.getEgonet(0).exportGraph();
@@ -221,27 +224,14 @@ public class CapGraph implements Graph {
 		 Graph g = new CapGraph();
          GraphLoader.loadGraph(g, "data/scc/test_1.txt");
          
-         System.out.println(g.exportGraph());
-         ((CapGraph) g).DFS(((CapGraph) g).nodesToVertices(((CapGraph) g).getNodes()), ((CapGraph) g).getNodes());
-      //   ((CapGraph) g).DFS(((CapGraph) g).nodesToVertices(((CapGraph) g).getNodes()), reverseGraph(((CapGraph) g).getNodes()));
+        // System.out.println(g.exportGraph());
+         
          g.getSCCs();
-         */
+         
 		
-		 for(int i = 0; i < 10; i++) {
-             Graph g = new CapGraph();
-             Set<Integer> vertices;
-
-             String answerFile = "data/scc_answers/scc_" + (i + 1) + ".txt";
-             GraphLoader.loadGraph(g, "data/scc/test_" + (i +1)+ ".txt");
-             BufferedReader br = new BufferedReader(new FileReader(answerFile));
-            
-
-             // build list from answer
-             List<Set<Integer>> answer = new ArrayList<Set<Integer>>();
-             String line;
-		 }
+		
 		
 	}
-
+*/
 	
 }
