@@ -3,6 +3,9 @@
  */
 package graph;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -25,12 +28,18 @@ public class CapGraph implements Graph {
 	private HashMap<Integer, HashSet<Integer>> nodes = new HashMap<>();
 	HashSet<Integer> visited;
 	Deque<Integer> finished;
-	Deque<Integer> vertices;
+	Deque<Integer> nodesOfSCC;
+	List<Graph> listSCC;
+	
 	
 	
 	/* (non-Javadoc)
 	 * @see graph.Graph#addVertex(int)
 	 */
+	public HashMap<Integer, HashSet<Integer>> getNodes () {
+		return nodes;
+	}
+	
 	@Override
 	public void addVertex(int num) {
 		// TODO Auto-generated method stub
@@ -94,72 +103,95 @@ public class CapGraph implements Graph {
 	/* (non-Javadoc)
 	 * @see graph.Graph#getSCCs()
 	 */
-	
-	
-	public Deque<Integer> DFS () {
-		visited = new HashSet<>();
-		finished = new ArrayDeque<Integer>();
-		vertices = new ArrayDeque<Integer>();
-		for (Integer i : nodes.keySet()) {
+	public Deque<Integer> nodesToVertices (HashMap<Integer, HashSet<Integer>> nodesToExplore) {
+		Deque<Integer> vertices = new ArrayDeque<Integer>();
+			
+		for (Integer i : nodesToExplore.keySet()) {
 			vertices.add(i);
 		}
 		
+		return vertices;
+		
+	}
+	
+	public Deque<Integer> DFS (Deque<Integer> vertices, HashMap<Integer, HashSet<Integer>> nodesToExplore) {
+		
+		visited = new HashSet<>();
+		finished = new ArrayDeque<Integer>();
+		listSCC = new ArrayList<>();
+		nodesOfSCC= new ArrayDeque<Integer>();
+		
 		while (!vertices.isEmpty()) {
+			
 			Integer v = vertices.poll();
 			if (!visited.contains(v)) {
-				DFSVisit(v);
+				DFSVisit(v, nodesToExplore);
+				
+				CapGraph g = new CapGraph();
+				while (!nodesOfSCC.isEmpty()) {
+					g.addVertex(nodesOfSCC.poll());
+				}
+				listSCC.add(g);
+				
 			}
 		}
 		
-		System.out.println(finished.toString());
+		
+		
+		
+		
 		
 		return finished;
 	}
 	
-	private void DFSVisit(Integer v) {
+	private void DFSVisit(Integer v, HashMap<Integer, HashSet<Integer>> nodesToExplore) {
+		
 		visited.add(v);
-		for (Integer n : nodes.get(v)) {
+		for (Integer n : nodesToExplore.get(v)) {
 			if (!visited.contains(n)) {
-				DFSVisit(n);
+			
+				
+				DFSVisit(n, nodesToExplore);
 			}
 		}
-		
+
 		finished.push(v);
+		nodesOfSCC.push(v);
+		System.out.println(finished.toString());
+		
+		
+		
 		
 	}
 	
-	private HashMap<Integer, HashSet<Integer>> reverseGraph(HashMap<Integer, HashSet<Integer>> originGraph) {
-		HashMap<Integer, HashSet<Integer>> graph = new HashMap<>();
-		for (Integer i : nodes.keySet()) {
-			graph.put(i, new HashSet<Integer>());
+	private static HashMap<Integer, HashSet<Integer>> reverseGraph(HashMap<Integer, HashSet<Integer>> originGraph) {
+		HashMap<Integer, HashSet<Integer>> reverseNodes = new HashMap<>();
+		for (Integer i : originGraph.keySet()) {
+			reverseNodes.put(i, new HashSet<Integer>());
 		}
 		
-		for (Integer i : graph.keySet()) {
+		for (Integer i : reverseNodes.keySet()) {
 			for (Integer vertices : originGraph.get(i)) {
-				graph.get(vertices).add(i);
+				reverseNodes.get(vertices).add(i);
 			}
 		}
-		
-		
-		
-		
-		return graph;
+		System.out.println(reverseNodes.toString());
+		return reverseNodes;
 		
 	}
 	
 	@Override
 	public List<Graph> getSCCs() {
 		// TODO Auto-generated method stub
-		Integer i;
-		List<Graph> sccsList = new ArrayList<>();
-		while (!finished.isEmpty()) {
-			i = finished.poll();
-			
+		HashMap<Integer, HashSet<Integer>> reverseNodes = new HashMap<>();
+		reverseNodes = reverseGraph(nodes);
+		DFS(finished, reverseNodes);
+		for (Graph g : listSCC) {
+			System.out.println(g.exportGraph().toString());	
 		}
 		
-		
-		
-		return null;
+	
+		return listSCC;
 	}
 
 	/* (non-Javadoc)
@@ -173,30 +205,41 @@ public class CapGraph implements Graph {
 	}
 	
 	
-	public static void main(String[] args) {
-		/*CapGraph graph = new CapGraph();
-		graph.addVertex(7);
-		graph.addVertex(8);
-		graph.addVertex(9);
-		graph.addVertex(6);
-		graph.addVertex(5);
-		graph.addEdge(7, 8);
-		graph.addEdge(7, 9);
+	public static void main(String[] args) throws FileNotFoundException {
+		//CapGraph graph = new CapGraph();
+	
 		
-		System.out.println(graph.getEgonet(7).exportGraph().get(7).size());
 		
+		/*
 		Graph graph = new CapGraph();
         GraphLoader.loadGraph(graph, "data/facebook_ucsd.txt");
         HashMap<Integer, HashSet<Integer>> res = graph.getEgonet(0).exportGraph();
 		System.out.println(res.get(22));
 		//System.out.println(res);
-		*/
+		
 		// for test SCC graph
 		 Graph g = new CapGraph();
-         GraphLoader.loadGraph(g, "data/scc/test_2.txt");
-         System.out.println(g.exportGraph());
-         ((CapGraph) g).DFS();
+         GraphLoader.loadGraph(g, "data/scc/test_1.txt");
          
+         System.out.println(g.exportGraph());
+         ((CapGraph) g).DFS(((CapGraph) g).nodesToVertices(((CapGraph) g).getNodes()), ((CapGraph) g).getNodes());
+      //   ((CapGraph) g).DFS(((CapGraph) g).nodesToVertices(((CapGraph) g).getNodes()), reverseGraph(((CapGraph) g).getNodes()));
+         g.getSCCs();
+         */
+		
+		 for(int i = 0; i < 10; i++) {
+             Graph g = new CapGraph();
+             Set<Integer> vertices;
+
+             String answerFile = "data/scc_answers/scc_" + (i + 1) + ".txt";
+             GraphLoader.loadGraph(g, "data/scc/test_" + (i +1)+ ".txt");
+             BufferedReader br = new BufferedReader(new FileReader(answerFile));
+            
+
+             // build list from answer
+             List<Set<Integer>> answer = new ArrayList<Set<Integer>>();
+             String line;
+		 }
 		
 	}
 
