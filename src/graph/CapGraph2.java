@@ -23,9 +23,9 @@ import util.GraphLoader;
  * named CapGraph.  Here is the stub file.
  *
  */
-public class CapGraph implements Graph {
+public class CapGraph2 implements Graph {
 
-	HashMap<Integer, HashSet<Integer>> nodes = new HashMap<>();
+	private HashMap<Integer, HashSet<Integer>> nodes = new HashMap<>();
 	HashSet<Integer> visited;
 	Deque<Integer> finished;
 	Deque<Integer> nodesOfSCC;
@@ -37,8 +37,8 @@ public class CapGraph implements Graph {
 	/* (non-Javadoc)
 	 * @see graph.Graph#addVertex(int)
 	*/
-	
-	public void addVertex1(int num) {
+	@Override
+	public void addVertex(int num) {
 		// TODO Auto-generated method stub
 		if (!nodes.containsKey(num)) {
 			nodes.put(num, new HashSet<Integer>());
@@ -46,8 +46,8 @@ public class CapGraph implements Graph {
 		}
 
 	}
-	@Override
-	public void addVertex (int num) {
+
+	public void addVertex1 (int num) {
 		// TODO Auto-generated method stub
 		if (!nodes1.containsKey(num)) {
 			Vertices v = new Vertices(num);
@@ -59,8 +59,8 @@ public class CapGraph implements Graph {
 	/* (non-Javadoc)
 	 * @see graph.Graph#addEdge(int, int)
 	 */
-	
-	public void addEdge1(int from, int to) {
+	@Override
+	public void addEdge(int from, int to) {
 		// TODO Auto-generated method stub
 		
 		if (nodes.containsKey(from)) {
@@ -69,8 +69,7 @@ public class CapGraph implements Graph {
 		
 
 	}
-	@Override
-	public void addEdge(int from, int to) {
+	public void addEdge1(int from, int to) {
 		// TODO Auto-generated method stub
 		
 		if (nodes1.containsKey(from)) {
@@ -83,8 +82,8 @@ public class CapGraph implements Graph {
 	/* (non-Javadoc)
 	 * @see graph.Graph#getEgonet(int)
 	 */
-	
-	public Graph getEgonet1(int center) {
+	@Override
+	public Graph getEgonet(int center) {
 		// TODO Auto-generated method stub
 		
 		if (nodes.containsKey(center)) {
@@ -108,24 +107,18 @@ public class CapGraph implements Graph {
 				
 		return null;
 	}
-	@Override
-	public Graph getEgonet(int center) {
+	public Graph getEgonet1(int center) {
 		// TODO Auto-generated method stub
 		
 		if (nodes1.containsKey(center)) {
-			
 			CapGraph graph = new CapGraph();
-			graph.addVertex(center);
+			graph.addVertex1(center);
 			graph.nodes1.get(center).addAllNeighbors(nodes1.get(center).getNeighbors());
 			
-			
-			
 			for (Integer i : graph.nodes1.get(center).getNeighbors()) {
-				graph.addVertex(i);
-				
+				graph.addVertex1(i);
 				graph.nodes1.get(i).addNeighbor(center);
 				for (Integer j : nodes1.get(i).getNeighbors()) {
-					
 					if (graph.nodes1.get(center).getNeighbors().contains(j)) {
 						graph.nodes1.get(i).addNeighbor(j);
 					}
@@ -232,46 +225,24 @@ public class CapGraph implements Graph {
 	/* (non-Javadoc)
 	 * @see graph.Graph#exportGraph()
 	 */
-	
-	public HashMap<Integer, HashSet<Integer>> exportGraph1() {
+	@Override
+	public HashMap<Integer, HashSet<Integer>> exportGraph() {
 		// TODO Auto-generated method stub
 		
 		return nodes;
 	}
-	@Override
-	public HashMap<Integer, HashSet<Integer>> exportGraph() {
+	
+	public HashMap<Integer, HashSet<Integer>> exportGraph1() {
 		// TODO Auto-generated method stub
 		HashMap<Integer, HashSet<Integer>> result = new HashMap<>();
 		for (Integer i : nodes1.keySet()) {
-			
 			result.put(i, nodes1.get(i).getNeighbors());
 		}
 		
 		return result;
 	}
 	
-	public HashMap<Integer, HashSet<Integer>> getNewRelations() {
-		HashMap<Integer, HashSet<Integer>> res = new HashMap<>();
-		HashSet<Integer> list = new HashSet<>();
-		for (Integer i : nodes1.keySet()) {
-			list.addAll(nodes1.get(i).getNeighbors());
-		}
-		
-		for (Integer i : nodes1.keySet()) {
-			HashSet<Integer> temp = nodes1.get(i).getNeighbors();
-			for (Integer j : list) {
-				if (j != i && !temp.contains(j)) {
-					if (res.get(i)==null) {res.put(i, new HashSet<Integer>());}
-					res.get(i).add(j);
-				}
-			}
-		}
-		
-		System.out.println(res);
-		return res;
-		
-	}
-	
+	/*
 	public static void main(String[] args) throws FileNotFoundException {
 	
 		
@@ -284,27 +255,22 @@ public class CapGraph implements Graph {
 		
 		Graph graph = new CapGraph();
         GraphLoader.loadGraph(graph, "data/facebook_ucsd.txt");
-       // System.out.println(graph.getEgonet(3));
-        
-       // HashMap<Integer, HashSet<Integer>> res = graph.getEgonet(3).exportGraph();
-        HashMap<Integer, HashSet<Integer>> res1 = ((CapGraph) graph.getEgonet(3)).getNewRelations();
-	//	System.out.println(res.get(22));
+        HashMap<Integer, HashSet<Integer>> res = graph.getEgonet(0).exportGraph();
+		System.out.println(res.get(22));
 		//System.out.println(res);
-
-		/*
+		
 		// for test SCC graph
 		 Graph g = new CapGraph();
          GraphLoader.loadGraph(g, "data/scc/test_1.txt");
          
-         System.out.println(g.exportGraph());
+        // System.out.println(g.exportGraph());
          
-      //   g.getSCCs();
+         g.getSCCs();
          
 		
-		*/
+		
 		
 	}
 
-	
+	*/
 }
-
