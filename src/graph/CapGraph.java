@@ -6,13 +6,20 @@ package graph;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import util.GraphLoader;
 
@@ -37,7 +44,9 @@ public class CapGraph implements Graph {
 	/* (non-Javadoc)
 	 * @see graph.Graph#addVertex(int)
 	*/
-	
+	public HashMap<Integer, Vertices> getNodes() {
+		return nodes1;
+	}
 	public void addVertex1(int num) {
 		// TODO Auto-generated method stub
 		if (!nodes.containsKey(num)) {
@@ -250,6 +259,8 @@ public class CapGraph implements Graph {
 		return result;
 	}
 	
+	// create new map for suggested relationships.
+	 	
 	public HashMap<Integer, HashSet<Integer>> getNewRelations() {
 		HashMap<Integer, HashSet<Integer>> res = new HashMap<>();
 		HashSet<Integer> list = new HashSet<>();
@@ -272,36 +283,61 @@ public class CapGraph implements Graph {
 		
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException {
+	public HashSet<Integer> mds() throws IOException {
+		HashMap<Integer, Vertices> map = new HashMap<Integer, Vertices>();
+		HashSet<Integer> result = new HashSet<>();
+		HashSet<Integer> nodesToDelete = new HashSet<>();
+		map.putAll(nodes1);
+		while (!map.isEmpty()) {
+			System.out.println("WTF Map size: " + map.size());
+			int node = getBiggestNode(map);
+			result.add(node);
+			nodesToDelete.add(node);
+			for (Integer i : map.keySet()) {
+				if (map.get(i).getNeighbors().contains(node)) {
+					nodesToDelete.add(i);
+				}
+			}
+			
+			for (Integer i : map.keySet()) {
+				for (Integer j : nodesToDelete) {
+					map.get(i).getNeighbors().remove(j);
+				}
+			}
+			for (Integer i : nodesToDelete) {
+				map.remove(i);
+			}
+			
+		}
 	
-		
-		//CapGraph graph = new CapGraph();
+		return result;
+	}
 	
-		
-		
-		
-		
-		
-		Graph graph = new CapGraph();
-        GraphLoader.loadGraph(graph, "data/facebook_ucsd.txt");
-       // System.out.println(graph.getEgonet(3));
-        
-       // HashMap<Integer, HashSet<Integer>> res = graph.getEgonet(3).exportGraph();
-        HashMap<Integer, HashSet<Integer>> res1 = ((CapGraph) graph.getEgonet(3)).getNewRelations();
-	//	System.out.println(res.get(22));
-		//System.out.println(res);
+	public int getBiggestNode (HashMap<Integer, Vertices> map){
 
-		/*
-		// for test SCC graph
-		 Graph g = new CapGraph();
-         GraphLoader.loadGraph(g, "data/scc/test_1.txt");
-         
-         System.out.println(g.exportGraph());
-         
-      //   g.getSCCs();
-         
+		int id = (int) map.keySet().toArray()[0];
+		for (Integer i : map.keySet()) {
+			if (map.get(i).getNeighbors().size() > map.get(id).getNeighbors().size()) {
+				id = i;
+			}
+		}
 		
-		*/
+		return id;
+		
+	}
+	
+	public static void main(String[] args) throws FileNotFoundException {
+
+		Graph graph = new CapGraph();
+        GraphLoader.loadGraph(graph, "data/facebook_2000.txt");
+        Map<Integer, HashSet<Integer>> res1 =  graph.exportGraph();
+        System.out.println(res1);
+        try {
+			System.out.println(((CapGraph) graph).mds());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

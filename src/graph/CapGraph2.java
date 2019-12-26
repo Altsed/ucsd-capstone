@@ -107,31 +107,7 @@ public class CapGraph2 implements Graph {
 				
 		return null;
 	}
-	public Graph getEgonet1(int center) {
-		// TODO Auto-generated method stub
-		
-		if (nodes1.containsKey(center)) {
-			CapGraph graph = new CapGraph();
-			graph.addVertex1(center);
-			graph.nodes1.get(center).addAllNeighbors(nodes1.get(center).getNeighbors());
-			
-			for (Integer i : graph.nodes1.get(center).getNeighbors()) {
-				graph.addVertex1(i);
-				graph.nodes1.get(i).addNeighbor(center);
-				for (Integer j : nodes1.get(i).getNeighbors()) {
-					if (graph.nodes1.get(center).getNeighbors().contains(j)) {
-						graph.nodes1.get(i).addNeighbor(j);
-					}
-				}
-				
-				
-			}
-			
-			return graph;
-		}
-				
-		return null;
-	}
+	
 	
 
 	/* (non-Javadoc)
@@ -232,15 +208,7 @@ public class CapGraph2 implements Graph {
 		return nodes;
 	}
 	
-	public HashMap<Integer, HashSet<Integer>> exportGraph1() {
-		// TODO Auto-generated method stub
-		HashMap<Integer, HashSet<Integer>> result = new HashMap<>();
-		for (Integer i : nodes1.keySet()) {
-			result.put(i, nodes1.get(i).getNeighbors());
-		}
-		
-		return result;
-	}
+	
 	
 	/*
 	public static void main(String[] args) throws FileNotFoundException {
