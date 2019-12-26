@@ -289,21 +289,22 @@ public class CapGraph implements Graph {
 		HashSet<Integer> nodesToDelete = new HashSet<>();
 		map.putAll(nodes1);
 		while (!map.isEmpty()) {
-			System.out.println("WTF Map size: " + map.size());
 			int node = getBiggestNode(map);
 			result.add(node);
 			nodesToDelete.add(node);
+			//adding nodes to remove
 			for (Integer i : map.keySet()) {
 				if (map.get(i).getNeighbors().contains(node)) {
 					nodesToDelete.add(i);
 				}
 			}
-			
+			//remove links for neighbors 
 			for (Integer i : map.keySet()) {
 				for (Integer j : nodesToDelete) {
 					map.get(i).getNeighbors().remove(j);
 				}
 			}
+			//remove nodes from map 
 			for (Integer i : nodesToDelete) {
 				map.remove(i);
 			}
