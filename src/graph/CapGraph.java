@@ -330,7 +330,7 @@ public class CapGraph implements Graph {
 	public static void main(String[] args) throws FileNotFoundException {
 
 		Graph graph = new CapGraph();
-        GraphLoader.loadGraph(graph, "data/facebook_2000.txt");
+        GraphLoader.loadGraph(graph, "data/small_test_graph.txt");
         Map<Integer, HashSet<Integer>> res1 =  graph.exportGraph();
         System.out.println(res1);
         try {
