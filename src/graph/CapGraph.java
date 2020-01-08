@@ -234,37 +234,37 @@ public class CapGraph implements Graph {
 		return res;
 
 	}
-	// finding minimum dominated set
+	/*
+	 * finding minimum dominated set
+	 * find User with maximum quantity of friends
+	 * For each friend from list of User friends
+	 * For each friend from list with friends 
+		Delete connection with friend of the User
+		Delete connection with User
+	 * delete friend from map
+	 *  delete User from map
+
+	 */
+	
+	
 	public HashSet<Integer> mds()  {
 		HashMap<Integer, Vertices> map = new HashMap<Integer, Vertices>();
 		HashSet<Integer> result = new HashSet<>();
-		//HashSet<Integer> nodesToDelete = new HashSet<>();
 		map.putAll(nodes1);
-		
 		while (!map.isEmpty()) {
 			int max_node = getBiggestNode(map);
 			result.add(max_node);
-			// remove links for neighbors
-			
+			// remove links for neighbors of max_node neighbors
 			for (Iterator<Integer> iterator = map.get(max_node).getNeighbors().iterator(); iterator.hasNext();) {
-			//	System.out.println("max neighbors: " + map.get(max_node).getNeighbors());
-
 				Integer i = iterator.next();
-			//	System.out.println("max node ID: " + max_node + " neighbor " + i);
-
 				for (Iterator<Integer> itr = map.get(i).getNeighbors().iterator(); itr.hasNext();) {
 					Integer j = itr.next();
-					
 					if (j != max_node) {
-				//		System.out.println("want to remove: " + i + " from: " + j + " with neighbors " + map.get(j).getNeighbors());
 						map.get(j).getNeighbors().remove(i);
 						map.get(j).getNeighbors().remove(max_node);
 					}
-				
 				}
 				map.remove(i);
-
-				
 			}
 			map.remove(max_node);
 			
@@ -273,39 +273,7 @@ public class CapGraph implements Graph {
 		checkMds(result);
 		return result;
 
-		/* refactoring
-		HashMap<Integer, Vertices> map = new HashMap<Integer, Vertices>();
-		HashSet<Integer> result = new HashSet<>();
-		HashSet<Integer> nodesToDelete = new HashSet<>();
-		map.putAll(nodes1);
 		
-		while (!map.isEmpty()) {
-			int max_node = getBiggestNode(map);
-			result.add(max_node);
-			nodesToDelete.add(max_node);
-			// adding nodes to remove
-			for (Integer i : map.keySet()) {
-				if (map.get(i).getNeighbors().contains(max_node)) {
-					nodesToDelete.add(i);
-				}
-			}
-			// remove links for neighbors
-			
-			for (Integer i : map.keySet()) {
-				for (Integer j : nodesToDelete) {
-					map.get(i).getNeighbors().remove(j);
-				}
-			}
-			
-			// remove nodes from map
-			for (Integer i : nodesToDelete) {
-				map.remove(i);
-			}
-
-		}
-
-		return result;
-		*/
 	}
 	// finding node with maximum number of neighbors
 	public int getBiggestNode(HashMap<Integer, Vertices> map) {
@@ -320,6 +288,13 @@ public class CapGraph implements Graph {
 		return max_node_id;
 
 	}
+	/*
+	 * For testing correctness of minimum dominated set 
+	 * This method removes nodes and all friends of nodes from 
+	 * dataset which are presented in minimum dominated set, 
+	 * as result size of dataset must be empty.
+	 */
+
 	public void checkMds(HashSet<Integer> result) {
 		HashMap<Integer, Vertices> test_nodes = new HashMap<>();
 		test_nodes.putAll(nodes1);
@@ -329,13 +304,8 @@ public class CapGraph implements Graph {
 				test_nodes.remove(j);
 			}
 			test_nodes.remove(i);
-
-			
 		}
-
-		
 		System.out.println("Covering " + test_nodes.size());
-		
 	}
 
 
