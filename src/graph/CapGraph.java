@@ -117,6 +117,8 @@ public class CapGraph implements Graph {
 	 * 
 	 * @see graph.Graph#getSCCs()
 	 */
+	
+	//this helper method used to find SCC
 	public Deque<Integer> nodesToVertices(HashMap<Integer, HashSet<Integer>> nodesToExplore) {
 		Deque<Integer> vertices = new ArrayDeque<Integer>();
 
@@ -127,6 +129,7 @@ public class CapGraph implements Graph {
 		return vertices;
 
 	}
+	
 
 	public Deque<Integer> DFS(Deque<Integer> vertices, HashMap<Integer, HashSet<Integer>> nodesToExplore) {
 
@@ -210,7 +213,11 @@ public class CapGraph implements Graph {
 		return result;
 	}
 
-	// create new map for suggested relationships.
+	// 
+	/*
+	 * When we pass egoNet to the method it returns HashMap with suggested relations, there are nodes (keys) Users
+	 * and value is the list with unconnected users which have mutual friend.
+	 */
 	public HashMap<Integer, HashSet<Integer>> getNewRelations() {
 		HashMap<Integer, HashSet<Integer>> res = new HashMap<>();
 		HashSet<Integer> list = new HashSet<>();
@@ -235,17 +242,19 @@ public class CapGraph implements Graph {
 
 	}
 	/*
-	 * finding minimum dominated set
-	 * find User with maximum quantity of friends
+	 * finding minimum dominated set (mds) 
+	 * create copy of graph (map)
+	 * First step: find User with maximum quantity of friends (see helper method getBiggestNode)
+	 * add this node to the result set
 	 * For each friend from list of User friends
-	 * For each friend from list with friends 
-		Delete connection with friend of the User
-		Delete connection with User
-	 * delete friend from map
-	 *  delete User from map
-
+	 * 	- for each friend from the list with friends 
+			- Delete connection with friend of the User
+			- Delete connection with User
+	 * 	- delete friend from map
+	 * delete User from map
+	 * repeat from first step while map have any nodes
+	 * return HashSet which presents minimum dominated set
 	 */
-	
 	
 	public HashSet<Integer> mds()  {
 		HashMap<Integer, Vertices> map = new HashMap<Integer, Vertices>();
@@ -254,7 +263,7 @@ public class CapGraph implements Graph {
 		while (!map.isEmpty()) {
 			int max_node = getBiggestNode(map);
 			result.add(max_node);
-			// remove links for neighbors of max_node neighbors
+			// Iterate through max_node neighbors and their neighbors to remove connection with max_node
 			for (Iterator<Integer> iterator = map.get(max_node).getNeighbors().iterator(); iterator.hasNext();) {
 				Integer i = iterator.next();
 				for (Iterator<Integer> itr = map.get(i).getNeighbors().iterator(); itr.hasNext();) {
@@ -270,12 +279,13 @@ public class CapGraph implements Graph {
 			
 			
 		}
+		//helper method to test correctness of algorithm
 		checkMds(result);
 		return result;
 
 		
 	}
-	// finding node with maximum number of neighbors
+	// helper method to return node with maximum number of neighbors
 	public int getBiggestNode(HashMap<Integer, Vertices> map) {
 
 		int max_node_id = (int) map.keySet().toArray()[0];
@@ -292,7 +302,7 @@ public class CapGraph implements Graph {
 	 * For testing correctness of minimum dominated set 
 	 * This method removes nodes and all friends of nodes from 
 	 * dataset which are presented in minimum dominated set, 
-	 * as result size of dataset must be empty.
+	 * as result size of dataset must be zero.
 	 */
 
 	public void checkMds(HashSet<Integer> result) {
@@ -305,7 +315,7 @@ public class CapGraph implements Graph {
 			}
 			test_nodes.remove(i);
 		}
-		System.out.println("Covering " + test_nodes.size());
+		System.out.println("Number of uncovered users: " + test_nodes.size());
 	}
 
 
